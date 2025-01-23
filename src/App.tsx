@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { CryptoData, Timeframe } from './types';
+import { Navbar } from './components/Navbar';
 import { BubbleChart } from './components/BubbleChart';
 import { TokenDetails } from './components/TokenDetails';
-import { SearchBar } from './components/SearchBar';
 import { BuySignalsPanel } from './components/BuySignalsPanel';
 
+// Mock data for demonstration
 const mockData: CryptoData[] = [
   {
     id: '1',
@@ -30,7 +31,7 @@ const mockData: CryptoData[] = [
 ];
 
 function App() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm] = useState('');
   const [selectedCrypto, setSelectedCrypto] = useState<CryptoData | null>(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState<Timeframe>('Day');
 
@@ -40,27 +41,25 @@ function App() {
   );
 
   return (
-    <div className="min-h-screen bg-black flex">
-      <div className="flex-1 p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-4 text-white">Crypto Analytics</h1>
-            <SearchBar value={searchTerm} onChange={setSearchTerm} />
-          </div>
-
-          <BubbleChart
-            data={filteredData}
-            onBubbleClick={setSelectedCrypto}
-          />
-
-          {selectedCrypto && (
-            <TokenDetails
-              crypto={selectedCrypto}
-              onClose={() => setSelectedCrypto(null)}
-              selectedTimeframe={selectedTimeframe}
-              onTimeframeChange={setSelectedTimeframe}
+    <div className="min-h-screen bg-zinc-950 flex">
+      <div className="flex-1 flex flex-col">
+        <Navbar />
+        <div className="flex-1 p-6">
+          <div className="max-w-7xl mx-auto">
+            <BubbleChart
+              data={filteredData}
+              onBubbleClick={setSelectedCrypto}
             />
-          )}
+
+            {selectedCrypto && (
+              <TokenDetails
+                crypto={selectedCrypto}
+                onClose={() => setSelectedCrypto(null)}
+                selectedTimeframe={selectedTimeframe}
+                onTimeframeChange={setSelectedTimeframe}
+              />
+            )}
+          </div>
         </div>
       </div>
       

@@ -20,8 +20,8 @@ export const BubbleChart: React.FC<BubbleChartProps> = ({ data, onBubbleClick })
       <AnimatePresence>
         {data.map((crypto) => {
           const size = getBubbleSize(crypto.marketCap);
-          const x = Math.random() * (100 - size/6) + size/12;
-          const y = Math.random() * (100 - size/6) + size/12;
+          const x = Math.random() * (500 - size/6) + size/12;
+          const y = Math.random() * (500 - size/6) + size/12;
           
           return (
             <motion.div
