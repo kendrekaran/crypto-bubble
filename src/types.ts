@@ -1,4 +1,5 @@
 export interface CryptoData {
+  launchDate: any;
   id: string;
   symbol: string;
   name: string;
