@@ -5,7 +5,8 @@ import {
   ChevronRight,
   CheckCircle,
   XCircle,
-  ExternalLink
+  ExternalLink,
+  ChevronUp
 } from 'lucide-react';
 
 interface SignalData {
@@ -16,8 +17,11 @@ interface SignalData {
   timeAgo: string;
   good: string[];
   bad: string[];
+  details?: {
+    good: string;
+    bad: string;
+  };
 }
-
 const WALLET_OPTIONS = [
   'apds46saerqweu...Gah',
   'b7x5n2qw3rt9...Xyz',
@@ -84,51 +88,76 @@ const WalletDropdown: React.FC<{
   );
 };
 
-const SignalItem: React.FC<{ signal: SignalData }> = ({ signal }) => (
-  <div className="p-4 border-b border-gray-800/50 hover:bg-gray-900/30 transition-colors cursor-pointer">
-    <div className="flex items-center justify-between mb-3">
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-white font-mono">${signal.symbol}</span>
-          <span className="text-orange-500">{signal.timeAgo} ago</span>
-        </div>
-        <span className="text-2xl font-bold text-white">${signal.price}</span>
-      </div>
-      <ChevronRight className="w-5 h-5 text-gray-600" />
-    </div>
+const SignalItem: React.FC<{ signal: SignalData }> = ({ signal }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
 
-    <div className="flex items-center gap-2 mb-3 text-sm">
-      <span className="text-gray-400">Risk: {signal.risk}/100</span>
-      <span className="text-gray-600">|</span>
-      <span className="text-gray-400">Market Cap: {signal.marketCap}</span>
-      <ExternalLink className="w-4 h-4 text-blue-400 ml-auto" />
-    </div>
-
-    <div className="mb-2">
-      <div className="flex items-center gap-2 text-emerald-500 mb-1">
-        <CheckCircle className="w-4 h-4" />
-        <span className="font-medium">The Good:</span>
-      </div>
-      {signal.good.map((item, index) => (
-        <div key={index} className="text-gray-400 text-sm pl-6">
-          {item}
+  return (
+    <div 
+      onClick={() => setIsExpanded(!isExpanded)}
+      className="p-4 border border-[#05621C] bg-[#103118]/50 mt-6 rounded-xl hover:bg-gray-900/30 transition-colors cursor-pointer"
+    >
+      <div className="flex items-center justify-between mb-3 ">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-white text-xl ">${signal.symbol}</span>
+            <span className="text-orange-500 text-xl">{signal.timeAgo} ago</span>
+          </div>
+          <span className="text-xl font-bold text-white">${signal.price}</span>
         </div>
-      ))}
-    </div>
-
-    <div>
-      <div className="flex items-center gap-2 text-rose-500 mb-1">
-        <XCircle className="w-4 h-4" />
-        <span className="font-medium">The Bad:</span>
+        {isExpanded ? (
+          <ChevronUp className="w-5 h-5 text-gray-600" />
+        ) : (
+          <ChevronRight className="w-5 h-5 text-gray-600" />
+        )}
       </div>
-      {signal.bad.map((item, index) => (
-        <div key={index} className="text-gray-400 text-sm pl-6">
-          {item}
-        </div>
-      ))}
+
+      <div className="flex items-center gap-2 mb-3 text-sm">
+        <span className="text-gray-400">Risk: {signal.risk}/100</span>
+        <span className="text-gray-600">|</span>
+        <span className="text-gray-400">Market Cap: {signal.marketCap}</span>
+        <ExternalLink className="w-4 h-4 text-blue-400 ml-auto" />
+      </div>
+
+
+      {isExpanded && (
+        <>
+        <div className="mb-2">
+            <div className="flex items-center gap-2 text-emerald-500 mb-1">
+              <CheckCircle className="w-4 h-4" />
+              <span className="font-medium">The Good:</span>
+            </div>
+            {signal.good.map((item, index) => (
+              <div key={index} className="text-gray-400 text-sm pl-6">
+                {item}
+              </div>
+            ))}
+          </div><div>
+              <div className="flex items-center gap-2 text-rose-500 mb-1">
+                <XCircle className="w-4 h-4" />
+                <span className="font-medium">The Bad:</span>
+              </div>
+              {signal.bad.map((item, index) => (
+                <div key={index} className="text-gray-400 text-sm pl-6">
+                  {item}
+                </div>
+              ))}
+
+              {signal.details && (
+                <div className="mt-3 p-3 bg-gray-900 rounded-lg">
+                  <div className="text-emerald-500 font-semibold mb-2">
+                    {signal.details.good}
+                  </div>
+                  <div className="text-rose-500 font-semibold">
+                    {signal.details.bad}
+                  </div>
+                </div>
+              )}
+            </div>
+        </>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 export const BuySignalsPanel: React.FC = () => {
   const [selectedWallet, setSelectedWallet] = useState(WALLET_OPTIONS[0]);
