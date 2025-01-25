@@ -1,5 +1,4 @@
 export interface CryptoData {
-  launchDate: any;
   id: string;
   symbol: string;
   name: string;
@@ -8,6 +7,8 @@ export interface CryptoData {
   volume24h: number;
   percentChange: number;
   rank: number;
+  launchDate?: string;
+  riskLevel: number; // 0-100
 }
 
 export interface TimeframeData {

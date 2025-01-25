@@ -63,7 +63,7 @@ export const Navbar = () => {
     switch (type) {
       case 'short':
       case 'bybit':
-        return 'bg-red-500/20 text-red-500 hover:bg-red-500/30';
+        return 'bg-green-500/20 text-green-500 hover:bg-green-500/30';
       case 'long':
       case 'rsi':
       case 'binance':
@@ -76,13 +76,13 @@ export const Navbar = () => {
   };
 
   const getSelectorItemStyle = (type: 'short' | 'long' | 'rsi' | 'ai' | 'binance' | 'bybit', isSelected: boolean) => {
-    const baseStyle = 'px-3 py-2 rounded cursor-pointer transition-colors duration-150 w-full text-left';
-    if (!isSelected) return `${baseStyle} hover:bg-gray-700 text-gray-300`;
+    const baseStyle = 'px-3 mt-2 py-2 rounded cursor-pointer transition-colors duration-150 w-full text-left';
+    if (!isSelected) return `${baseStyle} hover:bg-gray-700  text-gray-300`;
     
     switch (type) {
       case 'short':
       case 'bybit':
-        return `${baseStyle} bg-red-500/20 text-red-500`;
+        return `${baseStyle} bg-green-500/20 text-green-500`;
       case 'long':
       case 'rsi':
       case 'binance':
@@ -96,20 +96,15 @@ export const Navbar = () => {
 
   return (
     <div className="flex flex-col w-full bg-gray-900">
-      {/* Top Navigation */}
       <div className="flex items-center justify-between p-4 bg-gray-800/50">
-        {/* Logo */}
         <div className="flex items-center gap-2">
           <img
             src="https://i.ibb.co/znbC3SV/Group.jpg"
             alt="Coinchart.fun"
-            className="w-12 h-12 rounded-full"
+            className="w-10 h-10 rounded-full"
           />
           <span className="text-2xl font-bold text-white">Coinchart.fun</span>
         </div>
-
-        {/* Search Bar */}
-        
 
         {/* Top 100 & API Access */}
         <div className="flex items-center gap-4">
@@ -123,50 +118,50 @@ export const Navbar = () => {
               placeholder-gray-500"
           />
         </div>
-          <div className="relative">
-            <button 
-              onClick={() => setShowRankDropdown(!showRankDropdown)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700"
-            >
-              Top 100
-              <ChevronDown size={20} />
-            </button>
-            
-            {showRankDropdown && (
-              <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
-                <div className="p-2 space-y-1">
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" defaultChecked />
-                    <span className="text-white">Top 100</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">101 - 200</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">201 - 300</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">301 - 400</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">401 - 500</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">501 - 600</span>
-                  </label>
-                </div>
-              </div>
-            )}
-          </div>
-          <button className="flex items-center gap-2 text-gray-300 hover:text-white">
-            Need API Access ?
-            <FaTelegram size={20} className="text-blue-400" />
+        <div className="relative">
+          <button 
+            onClick={() => setShowRankDropdown(!showRankDropdown)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700"
+          >
+            Top 100
+            <ChevronDown size={20} />
           </button>
+          
+          {showRankDropdown && (
+            <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
+              <div className="p-2 space-y-1">
+                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                  <input type="radio" name="rank" className="text-blue-500" defaultChecked />
+                  <span className="text-white">Top 100</span>
+                </label>
+                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                  <input type="radio" name="rank" className="text-blue-500" />
+                  <span className="text-white">101 - 200</span>
+                </label>
+                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                  <input type="radio" name="rank" className="text-blue-500" />
+                  <span className="text-white">201 - 300</span>
+                </label>
+                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                  <input type="radio" name="rank" className="text-blue-500" />
+                  <span className="text-white">301 - 400</span>
+                </label>
+                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                  <input type="radio" name="rank" className="text-blue-500" />
+                  <span className="text-white">401 - 500</span>
+                </label>
+                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                  <input type="radio" name="rank" className="text-blue-500" />
+                  <span className="text-white">501 - 600</span>
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+        <button className="flex items-center ml-4 text-xs gap-2 text-gray-300 hover:text-white">
+          Need API Access ?
+          <FaTelegram size={14} className="text-blue-400" />
+        </button>
         </div>
       </div>
 
