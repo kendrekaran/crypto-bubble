@@ -2,10 +2,10 @@ import  { useState } from 'react';
 import { CryptoData, Timeframe } from './types';
 import { Navbar } from './components/Navbar';
 import { BubbleChart } from './components/BubbleChart';
-import { TokenDetails } from './components/TokenDetails';
 import { BuySignalsPanel } from './components/BuySignalsPanel';
+import { TokenDetails } from './components/TokenDetails';
+import { Wget } from './components/Chart';
 
-// Mock data for demonstration
 const mockData: CryptoData[] = [
   {
     id: '1',
@@ -72,7 +72,6 @@ const mockData: CryptoData[] = [
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCrypto, setSelectedCrypto] = useState<CryptoData | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<Timeframe>('Day');
 
   const filteredData = mockData.filter(crypto =>
     crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -91,12 +90,7 @@ function App() {
             />
 
             {selectedCrypto && (
-              <TokenDetails
-                crypto={selectedCrypto}
-                onClose={() => setSelectedCrypto(null)}
-                selectedTimeframe={selectedTimeframe}
-                onTimeframeChange={setSelectedTimeframe}
-              />
+              <Wget onClose={() => setSelectedCrypto(null)}/>
             )}
           </div>
         </div>

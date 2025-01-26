@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { 
   Crown,
   ChevronDown,
@@ -11,7 +11,7 @@ import {
 
 interface SignalData {
   symbol: string;
-  price: number;
+  price: number; 
   risk: number;
   marketCap: string;
   timeAgo: string;
@@ -94,13 +94,13 @@ const SignalItem: React.FC<{ signal: SignalData }> = ({ signal }) => {
   return (
     <div 
       onClick={() => setIsExpanded(!isExpanded)}
-      className="p-4 border border-[#05621C] bg-[#103118]/50 mt-6 rounded-xl hover:bg-gray-900/30 transition-colors cursor-pointer"
+      className="p-4 mx-4 border border-[#05621C] bg-[#103118]/50 mt-6 rounded-xl hover:bg-gray-900/30 transition-colors cursor-pointer"
     >
       <div className="flex items-center justify-between mb-3 ">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-4 mb-1">
             <span className="text-white text-xl ">${signal.symbol}</span>
-            <span className="text-orange-500 text-xl">{signal.timeAgo} ago</span>
+            <span className="text-orange-500 text-sm">{signal.timeAgo} ago</span>
           </div>
           <span className="text-xl font-bold text-white">${signal.price}</span>
         </div>
