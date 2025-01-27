@@ -11,18 +11,37 @@ function generateBubblePositions(count: number) {
   }));
 }
 
-export default function BitcoinRiskChart() {
+interface BitcoinRiskChartProps {
+  onBubbleClick: (crypto: any) => void;
+}
+
+export default function BitcoinRiskChart({onBubbleClick }: BitcoinRiskChartProps) {
     const bubblePositions = useMemo(() => generateBubblePositions(15), []);
   
     return (
         <div className="custom-div">
         {/* Y-axis labels */}
-        <div className="absolute -left-[30px] pb-5 h-full flex flex-col justify-between text-sm">
+        <div className="absolute -left-[30px] top-0 h-full flex flex-col justify-between text-sm">
           <span>100-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
           <span>80 -</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
           <span>60 -</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
           <span>40 -</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
           <span>20 -</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
           <span>00 -</span>
         </div>
   
@@ -42,6 +61,7 @@ export default function BitcoinRiskChart() {
               left: `${pos.x}%`,
               top: `${pos.y}%`,
             }}
+            
           >
             <div className="relative w-full h-full">
               {/* 3D Bubble effect */}
@@ -50,7 +70,7 @@ export default function BitcoinRiskChart() {
               </div>
   
               {/* Content */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <div onClick={() => onBubbleClick(crypto)} className="absolute inset-0 flex flex-col items-center justify-center text-center">
                 <div className="flex items-center gap-1 text-sm font-medium">
                   <svg
                     viewBox="0 0 24 24"
