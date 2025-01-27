@@ -1,10 +1,10 @@
 import  { useState } from 'react';
 import { CryptoData, Timeframe } from './types';
 import { Navbar } from './components/Navbar';
-import { BubbleChart } from './components/BubbleChart';
 import { BuySignalsPanel } from './components/BuySignalsPanel';
-import { TokenDetails } from './components/TokenDetails';
 import { Wget } from './components/Chart';
+import BitcoinRiskChart from './components/BubbleChart2';
+import DexRisks from './components/FetchData';
 
 const mockData: CryptoData[] = [
   {
@@ -82,12 +82,12 @@ function App() {
     <div className="max-h-screen max-w-screen bg-black flex overflow-hidden">
       <div className="flex-1 flex flex-col">
         <Navbar />
+        {/* <div className='bg-white'>
+        <DexRisks/>
+        </div> */}
         <div className="flex-1 p-6">
           <div className="max-w-7xl mx-auto">
-            <BubbleChart
-              data={filteredData}
-              onBubbleClick={setSelectedCrypto}
-            />
+            <BitcoinRiskChart/>
 
             {selectedCrypto && (
               <Wget onClose={() => setSelectedCrypto(null)}/>

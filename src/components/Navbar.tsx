@@ -1,7 +1,6 @@
-import  { useState } from 'react';
-import { Search, ChevronDown, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { Search, ChevronDown, Plus, SlidersHorizontal, X } from 'lucide-react';
 import { FaTelegram } from "react-icons/fa";
-
 
 interface Strategy {
   id: string;
@@ -17,9 +16,11 @@ interface Token {
 
 export const Navbar = () => {
   const [showRankDropdown, setShowRankDropdown] = useState(false);
-  const [showFilterDropdown] = useState(false);
   const [showStrategySelector, setShowStrategySelector] = useState(false);
   const [showTokenSelector, setShowTokenSelector] = useState(false);
+  const [showShortTermDropdown, setShowShortTermDropdown] = useState(false);
+  const [activeStrategyId, setActiveStrategyId] = useState('1'); 
+  const [selectedTokenType, setSelectedTokenType] = useState<'binance' | 'bybit' | 'ai'>('binance');
 
   const [selectedStrategies, setSelectedStrategies] = useState<Strategy[]>([
     { id: '1', name: 'Short-Term', type: 'short' },
@@ -45,33 +46,46 @@ export const Navbar = () => {
 
   const toggleStrategy = (strategy: Strategy) => {
     if (selectedStrategies.find(s => s.id === strategy.id)) {
-      setSelectedStrategies(selectedStrategies.filter(s => s.id !== strategy.id));
+      if (selectedStrategies.length > 1) {
+        setSelectedStrategies(selectedStrategies.filter(s => s.id !== strategy.id));
+        if (strategy.id === activeStrategyId) {
+          const remainingStrategies = selectedStrategies.filter(s => s.id !== strategy.id);
+          setActiveStrategyId(remainingStrategies[0].id);
+        }
+      }
     } else {
       setSelectedStrategies([...selectedStrategies, strategy]);
     }
   };
 
   const toggleToken = (token: Token) => {
-    if (selectedTokens.find(t => t.id === token.id)) {
-      setSelectedTokens(selectedTokens.filter(t => t.id !== token.id));
-    } else {
+    setSelectedTokenType(token.type);
+    if (!selectedTokens.find(t => t.id === token.id)) {
       setSelectedTokens([...selectedTokens, token]);
     }
   };
 
-  const getButtonStyle = (type: 'short' | 'long' | 'rsi' | 'ai' | 'binance' | 'bybit') => {
+  const getButtonStyle1 = (strategyId: string) => {
+    const isActive = strategyId === activeStrategyId;
+    return isActive 
+      ? 'bg-[#1B61B3] text-[#F6F6F6] hover:bg-blue-500/30'
+      : 'bg-gray-700 text-[#F6F6F6] hover:bg-gray-600';
+  };
+
+  const getTokenButtonStyle2 = (type: 'binance' | 'bybit' | 'ai') => {
     switch (type) {
-      case 'short':
-      case 'bybit':
-        return 'bg-green-500/20 text-green-500 hover:bg-green-500/30';
-      case 'long':
-      case 'rsi':
       case 'binance':
-        return 'bg-green-500/20 text-green-500 hover:bg-green-500/30';
+        return type === selectedTokenType
+          ? 'bg-[#1B61B3] text-[#F6F6F6] hover:bg-blue-500/30'
+          : 'bg-gray-700 text-gray-300 hover:bg-gray-600';
+      case 'bybit':
+        return type === selectedTokenType
+          ? 'bg-[#1B61B3] text-[#F6F6F6] hover:bg-blue-500/30'
+          : 'bg-gray-700 text-gray-300 hover:bg-gray-600';
       case 'ai':
-        return 'bg-purple-500/20 text-purple-500 hover:bg-purple-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-500 hover:bg-gray-500/30';
+        return type === selectedTokenType
+          ? 'bg-[#1B61B3] text-[#F6F6F6] hover:bg-blue-500/30'
+          : 'bg-gray-700 text-gray-300 hover:bg-gray-600';
     }
   };
 
@@ -82,15 +96,15 @@ export const Navbar = () => {
     switch (type) {
       case 'short':
       case 'bybit':
-        return `${baseStyle} bg-green-500/20 text-green-500`;
+        return `${baseStyle} bg-[#1B61B3] text-[#F6F6F6]`;
       case 'long':
       case 'rsi':
       case 'binance':
-        return `${baseStyle} bg-green-500/20 text-green-500`;
+        return `${baseStyle} bg-[#1B61B3] text-[#F6F6F6]`;
       case 'ai':
-        return `${baseStyle} bg-purple-500/20 text-purple-500`;
+        return `${baseStyle} bg-[#1B61B3] text-[#F6F6F6]`;
       default:
-        return `${baseStyle} bg-gray-700 text-white`;
+        return `${baseStyle} bg-[#1B61B3] text-[#F6F6F6]`;
     }
   };
 
@@ -106,114 +120,158 @@ export const Navbar = () => {
           <span className="text-2xl font-bold text-white">Coinchart.fun</span>
         </div>
 
-        {/* Top 100 & API Access */}
         <div className="flex items-center gap-4">
-        <div className="relative max-w-xl w-64 mx-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Search Crypto Currencies"
-            className="w-full bg-gray-800 text-white pl-10 pr-4 py-2 rounded-lg
-              border border-gray-700 focus:border-blue-500 focus:outline-none
-              placeholder-gray-500"
-          />
-        </div>
-        <div className="relative">
-          <button 
-            onClick={() => setShowRankDropdown(!showRankDropdown)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700"
-          >
-            Top 100
-            <ChevronDown size={20} />
-          </button>
-          
-          {showRankDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
-              <div className="p-2 space-y-1">
-                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                  <input type="radio" name="rank" className="text-blue-500" defaultChecked />
-                  <span className="text-white">Top 100</span>
-                </label>
-                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                  <input type="radio" name="rank" className="text-blue-500" />
-                  <span className="text-white">101 - 200</span>
-                </label>
-                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                  <input type="radio" name="rank" className="text-blue-500" />
-                  <span className="text-white">201 - 300</span>
-                </label>
-                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                  <input type="radio" name="rank" className="text-blue-500" />
-                  <span className="text-white">301 - 400</span>
-                </label>
-                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                  <input type="radio" name="rank" className="text-blue-500" />
-                  <span className="text-white">401 - 500</span>
-                </label>
-                <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                  <input type="radio" name="rank" className="text-blue-500" />
-                  <span className="text-white">501 - 600</span>
-                </label>
+          <div className="relative max-w-xl w-64 mx-4">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <input
+              type="text"
+              placeholder="Search Crypto Currencies"
+              className="w-full bg-gray-800 text-white pl-10 pr-4 py-2 rounded-lg
+                border border-gray-700 focus:border-blue-500 focus:outline-none
+                placeholder-gray-500"
+            />
+          </div>
+          <div className="relative">
+            <button 
+              onClick={() => setShowRankDropdown(!showRankDropdown)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700"
+            >
+              Top 100
+              <ChevronDown size={20} />
+            </button>
+            
+            {showRankDropdown && (
+              <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
+                <div className="p-2 space-y-1">
+                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                    <input type="radio" name="rank" className="text-blue-500" defaultChecked />
+                    <span className="text-white">Top 100</span>
+                  </label>
+                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                    <input type="radio" name="rank" className="text-blue-500" />
+                    <span className="text-white">101 - 200</span>
+                  </label>
+                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                    <input type="radio" name="rank" className="text-blue-500" />
+                    <span className="text-white">201 - 300</span>
+                  </label>
+                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                    <input type="radio" name="rank" className="text-blue-500" />
+                    <span className="text-white">301 - 400</span>
+                  </label>
+                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                    <input type="radio" name="rank" className="text-blue-500" />
+                    <span className="text-white">401 - 500</span>
+                  </label>
+                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
+                    <input type="radio" name="rank" className="text-blue-500" />
+                    <span className="text-white">501 - 600</span>
+                  </label>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-        <button className="flex items-center ml-4 text-xs gap-2 text-gray-300 hover:text-white">
-          Need API Access ?
-          <FaTelegram size={14} className="text-blue-400" />
-        </button>
+            )}
+          </div>
+          <button className="flex items-center ml-4 text-xs gap-2 text-gray-300 hover:text-white">
+            API Access ?
+            <FaTelegram size={14} className="text-blue-400" />
+          </button>
         </div>
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="flex items-center justify-between p-4 bg-black">
-        {/* Left Section */}
-        <div className="flex items-center gap-12">
-          {/* Strategies */}
+      <div className="flex items-center justify-start p-4 bg-black pr-24">
+        <div className="flex items-center justify-between gap-24">
           <div className="flex items-center gap-4">
             <span className="text-white">Strategies :</span>
             {selectedStrategies.map(strategy => (
-              <button
-                key={strategy.id}
-                onClick={() => toggleStrategy(strategy)}
-                className={`flex items-center gap-2 px-4 py-1.5 rounded-lg ${getButtonStyle(strategy.type)}`}
-              >
-                {strategy.name}
-                {strategy.type === 'short' && <span className="text-xl">⚡</span>}
-              </button>
+              <div key={strategy.id} className="relative">
+                <button
+                  onClick={() => setActiveStrategyId(strategy.id)}
+                  className={`flex items-center gap-2 px-4 py-1.5 rounded-full ${getButtonStyle1(strategy.id)}`}
+                >
+                  {strategy.name}
+                  {strategy.type === 'short' && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowShortTermDropdown(!showShortTermDropdown);
+                      }}
+                    >
+                      <SlidersHorizontal size={18} />
+                    </button>
+                  )}
+                </button>
+                
+                {strategy.type === 'short' && showShortTermDropdown && (
+                  <div className="absolute left-0 mt-2 w-64 bg-[#1F2937] rounded-lg shadow-lg z-50">
+                    <div className="p-4 space-y-3">
+                      <div className="space-y-2">
+                        <h3 className="text-white font-semibold mb-2">Filters</h3>
+                        <label className="flex font-light items-center gap-2 text-white">
+                          <input type="checkbox" className="rounded bg-gray-700 border-gray-600" />
+                          <span>Skip potential traps</span>
+                        </label>
+                        <label className="flex font-light items-center gap-2 text-white">
+                          <input type="checkbox" className="rounded bg-gray-700 border-gray-600" />
+                          <span>Avoid Overhyped Tokens</span>
+                        </label>
+                        <label className="flex font-light items-center gap-2 text-white">
+                          <input type="checkbox" className="rounded bg-gray-700 border-gray-600" />
+                          <span>Market Cap - 10M</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
             <button
               onClick={() => setShowStrategySelector(!showStrategySelector)}
-              className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-gray-700"
+              className="w-8 h-8 rounded-full bg-[#1B61B3] text-[#F6F6F6] flex items-center justify-center hover:bg-gray-700"
             >
-              <Plus size={20} />
+              {showStrategySelector ? <X size={20} /> : <Plus size={20} />}
             </button>
           </div>
 
-          {/* Tokens */}
           <div className="flex items-center gap-4">
             <span className="text-white">Token :</span>
             {selectedTokens.map(token => (
               <button
                 key={token.id}
-                onClick={() => toggleToken(token)}
-                className={`px-4 py-1.5 rounded-lg ${getButtonStyle(token.type)}`}
+                onClick={() => setSelectedTokenType(token.type)}
+                className={`px-4 py-1.5 rounded-full ${getTokenButtonStyle2(token.type)}`}
               >
                 {token.name}
               </button>
             ))}
             <button
               onClick={() => setShowTokenSelector(!showTokenSelector)}
-              className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-gray-700"
+              className="w-8 h-8 rounded-full bg-[#1B61B3] text-[#F6F6F6] flex items-center justify-center hover:bg-gray-700"
             >
-              <Plus size={20} />
+              {showTokenSelector ? <X size={20} /> : <Plus size={20} />}
             </button>
+            {showTokenSelector && (
+              <div className="absolute top-36 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
+                <div className="p-2">
+                  {allTokens.map(token => (
+                    <button
+                      key={token.id}
+                      onClick={() => toggleToken(token)}
+                      className={getSelectorItemStyle(
+                        token.type,
+                        selectedTokens.some(t => t.id === token.id)
+                      )}
+                    >
+                      {token.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Strategy Selector Dropdown */}
         {showStrategySelector && (
-          <div className="absolute left-32 top-32 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
+          <div className="absolute left-72 top-36 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
             <div className="p-2">
               {allStrategies.map(strategy => (
                 <button
@@ -227,47 +285,6 @@ export const Navbar = () => {
                   {strategy.name}
                 </button>
               ))}
-            </div>
-          </div>
-        )}
-
-        {/* Token Selector Dropdown */}
-        {showTokenSelector && (
-          <div className="absolute left-96 top-32 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
-            <div className="p-2">
-              {allTokens.map(token => (
-                <button
-                  key={token.id}
-                  onClick={() => toggleToken(token)}
-                  className={getSelectorItemStyle(
-                    token.type,
-                    selectedTokens.some(t => t.id === token.id)
-                  )}
-                >
-                  {token.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Filter Dropdown */}
-        {showFilterDropdown && (
-          <div className="absolute left-4 top-32 w-72 bg-gray-800 rounded-lg shadow-lg z-50 p-4">
-            <h3 className="text-lg font-semibold text-white mb-4">Filter</h3>
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-white cursor-pointer">
-                <input type="checkbox" className="form-checkbox text-blue-500" />
-                <span>Avoid potential traps</span>
-              </label>
-              <label className="flex items-center gap-2 text-white cursor-pointer">
-                <input type="checkbox" className="form-checkbox text-blue-500" />
-                <span>Avoid too bullish tokens</span>
-              </label>
-              <label className="flex items-center gap-2 text-white cursor-pointer">
-                <input type="checkbox" className="form-checkbox text-blue-500" />
-                <span>Avoid Market Structure Breaks</span>
-              </label>
             </div>
           </div>
         )}
