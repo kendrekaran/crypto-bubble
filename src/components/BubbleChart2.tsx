@@ -1,26 +1,110 @@
 "use client";
 
-import { useMemo } from "react";
-import './bubble.css'
+import { useEffect, useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import './bubble.css';
 
-// Generate random positions for bubbles
-function generateBubblePositions(count: number) {
-  return Array.from({ length: count }, () => ({
-    x: Math.random() * 80 + 10,
-    y: Math.random() * 80 + 10,
-  }));
+interface CryptoData {
+  Symbol: string;
+  Risk: number;
 }
 
 interface BitcoinRiskChartProps {
-  onBubbleClick: (crypto: any) => void;
+  onBubbleClick: (crypto: CryptoData) => void;
 }
 
-export default function BitcoinRiskChart({onBubbleClick }: BitcoinRiskChartProps) {
-    const bubblePositions = useMemo(() => generateBubblePositions(15), []);
-  
-    return (
-        <div className="custom-div">
-        {/* Y-axis labels */}
+export default function BitcoinRiskChart({ onBubbleClick }: BitcoinRiskChartProps) {
+  const [data, setData] = useState<CryptoData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedRange, setSelectedRange] = useState("Top 100");
+  const [showRankDropdown, setShowRankDropdown] = useState(false);
+
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://3.75.231.25/dex_risks");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const result = await response.json();
+        setData(result); // Assuming the API returns an array of { Symbol, Risk }
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch data");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Filter the data based on the selected range
+  const filteredData = useMemo(() => {
+    const start = selectedRange === "Top 100" ? 0 : parseInt(selectedRange.split(" - ")[0]) - 1;
+    const end = selectedRange === "Top 100" ? 100 : parseInt(selectedRange.split(" - ")[1]);
+    return data.slice(start, end);
+  }, [data, selectedRange]);
+
+  // Calculate positions based on risk levels
+  const bubblePositions = useMemo(() => {
+    return filteredData.map((item) => {
+      const y = 100 - item.Risk;
+      const x = Math.random() * 80 + 10;
+      return { x, y };
+    });
+  }, [filteredData]);
+
+  if (loading) {
+    return <div className="text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500">Error: {error}</div>;
+  }
+
+  return (
+    <div className="relative">
+      {/* Dropdown */}
+      <div className="relative mb-4">
+        <button
+          onClick={() => setShowRankDropdown(!showRankDropdown)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700"
+        >
+          {selectedRange}
+          <ChevronDown size={20} />
+        </button>
+
+        {showRankDropdown && (
+          <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
+            <div className="p-2 space-y-1">
+              {["Top 100", "101 - 200", "201 - 300", "301 - 400", "401 - 500", "501 - 600"].map((range) => (
+                <label
+                  key={range}
+                  className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                  onClick={() => {
+                    setSelectedRange(range);
+                    setShowRankDropdown(false);
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="rank"
+                    className="text-blue-500"
+                    checked={selectedRange === range}
+                    onChange={() => setSelectedRange(range)}
+                  />
+                  <span className="text-white">{range}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Chart */}
+      <div className="custom-div">
         <div className="absolute -left-[30px] top-0 h-full flex flex-col justify-between text-sm">
           <span>100-</span>
           <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
@@ -44,15 +128,11 @@ export default function BitcoinRiskChart({onBubbleClick }: BitcoinRiskChartProps
           <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-</span>
           <span>00 -</span>
         </div>
-  
-        {/* Chart title */}
+
         <div className="absolute left-8 top-2 text-lg font-semibold">Risk Levels</div>
-  
-        {/* Value labels */}
         <div className="absolute bottom-2 right-4 text-emerald-300 font-medium">UNDERVALUED</div>
         <div className="absolute top-2 right-4 text-red-300 font-medium">OVERVALUED</div>
-  
-        {/* Bitcoin bubbles */}
+
         {bubblePositions.map((pos, i) => (
           <div
             key={i}
@@ -61,31 +141,22 @@ export default function BitcoinRiskChart({onBubbleClick }: BitcoinRiskChartProps
               left: `${pos.x}%`,
               top: `${pos.y}%`,
             }}
-            
           >
-            <div className="relative w-full h-full">
-              {/* 3D Bubble effect */}
-              <div className="absolute inset-0 rounded-full bg-black/20 backdrop-blur-sm hite/20 shadow-lg transform scale-100 transition-transform hover:scale-105">
+            <div className="relative w-20 h-20 p-2">
+              <div className="absolute inset-0 rounded-full bg-black/20 backdrop-blur-sm shadow-lg transform scale-100 transition-transform hover:scale-105">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 to-transparent" />
               </div>
-  
-              {/* Content */}
-              <div onClick={() => onBubbleClick(crypto)} className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center gap-1 text-sm font-medium">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-4 h-4 text-orange-500"
-                    fill="currentColor"
-                  >
-                    <path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.974.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z" />
-                  </svg>
-                  <span>BITCOIN</span>
+
+              <div onClick={() => onBubbleClick(filteredData[i])} className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <div className="flex items-center gap-1 text-xs font-medium">
+                  <span>{filteredData[i].Symbol}</span>
                 </div>
-                <div className="text-lg font-bold">-21%</div>
+                <div className="text-sm font-bold">{filteredData[i].Risk}%</div>
               </div>
             </div>
           </div>
         ))}
       </div>
-    );
-  }
+    </div>
+  );
+}

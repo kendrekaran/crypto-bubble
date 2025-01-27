@@ -1,11 +1,10 @@
 import  { useState } from 'react';
-import { CryptoData, Timeframe } from './types';
+import { CryptoData } from './types';
 import { Navbar } from './components/Navbar';
 import { BuySignalsPanel } from './components/BuySignalsPanel';
 import { Wget } from './components/Chart';
 import BitcoinRiskChart from './components/BubbleChart2';
 import DexRisks from './components/FetchData';
-
 
 const mockData: CryptoData[] = [
   {
