@@ -6,6 +6,7 @@ import { Wget } from './components/Chart';
 import BitcoinRiskChart from './components/BubbleChart2';
 import DexRisks from './components/FetchData';
 
+
 const mockData: CryptoData[] = [
   {
     id: '1',
@@ -79,25 +80,24 @@ function App() {
   );
 
   return (
-    <div className="max-h-screen max-w-screen bg-black flex overflow-hidden">
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        {/* <div className='bg-white'>
-        <DexRisks/>
-        </div> */}
-        <div className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
-            <BitcoinRiskChart/>
+          <div className="max-h-screen max-w-screen bg-black flex overflow-hidden">
+            <div className="flex-1 flex flex-col">
+              <Navbar />
+              {/* <div className='bg-white'>
+              <DexRisks/>
+              </div> */}
+              <div className="flex-1 p-6">
+                <div className="max-w-7xl mx-auto">
+                  <BitcoinRiskChart/>
 
-            {selectedCrypto && (
-              <Wget onClose={() => setSelectedCrypto(null)}/>
-            )}
+                  {selectedCrypto && (
+                    <Wget onClose={() => setSelectedCrypto(null)}/>
+                  )}
+                </div>
+              </div>
+            </div>
+            <BuySignalsPanel />
           </div>
-        </div>
-      </div>
-      
-      <BuySignalsPanel />
-    </div>
   );
 }
 
