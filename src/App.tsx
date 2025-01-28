@@ -1,10 +1,10 @@
 import  { useState } from 'react';
-import { CryptoData } from './types';
-import { Navbar } from './components/Navbar';
+import { CryptoData, Timeframe } from './types';
 import { BuySignalsPanel } from './components/BuySignalsPanel';
 import { Wget } from './components/Chart';
 import BitcoinRiskChart from './components/BubbleChart2';
 import DexRisks from './components/FetchData';
+import { Navbar } from './components/Navbar';
 
 const mockData: CryptoData[] = [
   {
@@ -71,6 +71,7 @@ const mockData: CryptoData[] = [
 
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRange, setSelectedRange] = useState("Top 100");
   const [selectedCrypto, setSelectedCrypto] = useState<CryptoData | null>(null);
 
   const filteredData = mockData.filter(crypto =>
@@ -78,16 +79,24 @@ function App() {
     crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  function handleBubbleClick(crypto: CryptoData): void {
+    setSelectedCrypto(crypto);
+  }
+
   return (
           <div className="max-h-screen max-w-screen bg-black flex overflow-hidden">
             <div className="flex-1 flex flex-col">
-              <Navbar />
+            <Navbar onRangeChange={setSelectedRange} />
               {/* <div className='bg-white'>
               <DexRisks/>
               </div> */}
               <div className="flex-1 p-6">
                 <div className="max-w-7xl mx-auto">
-                  <BitcoinRiskChart  onBubbleClick={setSelectedCrypto}/>
+                <BitcoinRiskChart 
+                  selectedRange={selectedRange}
+                  onBubbleClick={handleBubbleClick} 
+                />
+
 
                   {selectedCrypto && (
                     <Wget onClose={() => setSelectedCrypto(null)}/>

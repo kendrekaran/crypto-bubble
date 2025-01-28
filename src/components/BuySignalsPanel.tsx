@@ -102,7 +102,7 @@ const SignalItem: React.FC<{ signal: SignalData; isLocked?: boolean }> = ({ sign
       onClick={() => !isLocked && setIsExpanded(!isExpanded)}
       className="p-4 mx-4 border border-[#05621C] bg-[#103118]/50 mt-6 rounded-xl hover:bg-gray-900/30 transition-colors cursor-pointer shadow-lg hover:shadow-xl relative"
     >
-      {/* Lock Overlay */}
+      
       {isLocked && (
         <div className="absolute inset-0 bg-[#103118]/50 backdrop-blur-sm rounded-xl flex items-center justify-center pointer-events-none">
           <Lock className="w-8 h-8 text-white" />

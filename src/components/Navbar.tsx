@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Search, ChevronDown, Plus, SlidersHorizontal, X } from 'lucide-react';
 import { FaTelegram } from "react-icons/fa";
 
@@ -14,13 +14,18 @@ interface Token {
   type: 'ai' | 'binance' | 'bybit';
 }
 
-export const Navbar = () => {
+interface NavbarProps {
+  onRangeChange: (range: string) => void;
+}
+
+export const Navbar = ({ onRangeChange }: NavbarProps) => {
   const [showRankDropdown, setShowRankDropdown] = useState(false);
   const [showStrategySelector, setShowStrategySelector] = useState(false);
   const [showTokenSelector, setShowTokenSelector] = useState(false);
   const [showShortTermDropdown, setShowShortTermDropdown] = useState(false);
-  const [activeStrategyId, setActiveStrategyId] = useState('1'); 
+  const [activeStrategyId, setActiveStrategyId] = useState('1');
   const [selectedTokenType, setSelectedTokenType] = useState<'binance' | 'bybit' | 'ai'>('binance');
+  const [selectedRange, setSelectedRange] = useState("Top 100");
 
   const [selectedStrategies, setSelectedStrategies] = useState<Strategy[]>([
     { id: '1', name: 'Short-Term', type: 'short' },
@@ -31,6 +36,12 @@ export const Navbar = () => {
     { id: '1', name: 'Binance', type: 'binance' },
     { id: '2', name: 'Bybit', type: 'bybit' }
   ]);
+
+  const handleRangeChange = (range: string) => {
+    setSelectedRange(range);
+    setShowRankDropdown(false);
+    onRangeChange(range);
+  }
 
   const allStrategies: Strategy[] = [
     { id: '1', name: 'Short-Term', type: 'short' },
@@ -57,6 +68,8 @@ export const Navbar = () => {
       setSelectedStrategies([...selectedStrategies, strategy]);
     }
   };
+
+
 
   const toggleToken = (token: Token) => {
     setSelectedTokenType(token.type);
@@ -132,41 +145,33 @@ export const Navbar = () => {
             />
           </div>
           <div className="relative">
-            <button 
+            <button
               onClick={() => setShowRankDropdown(!showRankDropdown)}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700"
             >
-              Top 100
+              {selectedRange}
               <ChevronDown size={20} />
             </button>
-            
+
             {showRankDropdown && (
               <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
                 <div className="p-2 space-y-1">
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" defaultChecked />
-                    <span className="text-white">Top 100</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">101 - 200</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">201 - 300</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">301 - 400</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">401 - 500</span>
-                  </label>
-                  <label className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer">
-                    <input type="radio" name="rank" className="text-blue-500" />
-                    <span className="text-white">501 - 600</span>
-                  </label>
+                  {["Top 100", "101 - 200", "201 - 300", "301 - 400"].map((range) => (
+                    <label
+                      key={range}
+                      className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                      onClick={() => handleRangeChange(range)}
+                    >
+                      <input
+                        type="radio"
+                        name="rank"
+                        className="text-blue-500"
+                        checked={selectedRange === range}
+                        onChange={() => handleRangeChange(range)}
+                      />
+                      <span className="text-white">{range}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             )}

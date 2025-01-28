@@ -11,16 +11,14 @@ interface CryptoData {
 
 interface BitcoinRiskChartProps {
   onBubbleClick: (crypto: CryptoData) => void;
+  selectedRange: string; // Add this prop
 }
 
-export default function BitcoinRiskChart({ onBubbleClick }: BitcoinRiskChartProps) {
+export default function BitcoinRiskChart({ onBubbleClick, selectedRange }: BitcoinRiskChartProps) {
   const [data, setData] = useState<CryptoData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedRange, setSelectedRange] = useState("Top 100");
-  const [showRankDropdown, setShowRankDropdown] = useState(false);
 
-  // Fetch data from the API
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,14 +27,13 @@ export default function BitcoinRiskChart({ onBubbleClick }: BitcoinRiskChartProp
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const result = await response.json();
-        setData(result); // Assuming the API returns an array of { Symbol, Risk }
+        setData(result);
         setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch data");
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -66,42 +63,6 @@ export default function BitcoinRiskChart({ onBubbleClick }: BitcoinRiskChartProp
 
   return (
     <div className="relative">
-      {/* Dropdown */}
-      <div className="relative mb-4">
-        <button
-          onClick={() => setShowRankDropdown(!showRankDropdown)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700"
-        >
-          {selectedRange}
-          <ChevronDown size={20} />
-        </button>
-
-        {showRankDropdown && (
-          <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-50">
-            <div className="p-2 space-y-1">
-              {["Top 100", "101 - 200", "201 - 300", "301 - 400", "401 - 500", "501 - 600"].map((range) => (
-                <label
-                  key={range}
-                  className="flex items-center gap-2 px-3 py-2 hover:bg-gray-700 rounded cursor-pointer"
-                  onClick={() => {
-                    setSelectedRange(range);
-                    setShowRankDropdown(false);
-                  }}
-                >
-                  <input
-                    type="radio"
-                    name="rank"
-                    className="text-blue-500"
-                    checked={selectedRange === range}
-                    onChange={() => setSelectedRange(range)}
-                  />
-                  <span className="text-white">{range}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
 
       {/* Chart */}
       <div className="custom-div">
