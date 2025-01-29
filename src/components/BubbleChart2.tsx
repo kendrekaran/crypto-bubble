@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import './bubble.css';
@@ -103,7 +101,7 @@ export default function BitcoinRiskChart({ onBubbleClick, selectedRange }: Bitco
               top: `${pos.y}%`,
             }}
           >
-            <div className="relative w-20 h-20 p-2">
+            <div className="bubble relative w-20 h-20 p-2">
               <div className="absolute inset-0 rounded-full bg-black/20 backdrop-blur-sm shadow-lg transform scale-100 transition-transform hover:scale-105">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 to-transparent" />
               </div>

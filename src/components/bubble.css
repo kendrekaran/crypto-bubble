@@ -14,3 +14,10 @@
     padding: 1.5rem; /* 24px padding */
     color: white;
   }
+
+  .bubble {
+    width: 3rem !important;
+    height: 3rem !important;
+    font-size: 0.8rem;
+    margin: 10px;
+  }
