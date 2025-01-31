@@ -11,6 +11,11 @@ export default function Home() {
     setSelectedRange(range);
   };
 
+  const handleBubbleClick = (crypto: CryptoData) => {
+    // Show the Wget component with moralisLink
+    return <Wget onClose={() => {/* handle close */}} moralisLink={crypto.moralis} />;
+  };
+
   return (
     <div>
       <Navbar 
@@ -19,9 +24,7 @@ export default function Home() {
       />
       <BitcoinRiskChart 
         selectedRange={selectedRange}
-        onBubbleClick={(crypto) => {
-          // Handle bubble click
-        }}
+        onBubbleClick={handleBubbleClick}
       />
     </div>
   );
